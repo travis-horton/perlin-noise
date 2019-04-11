@@ -136,10 +136,10 @@ function generatePerlinArray(w, h, detail) {
     let vBR = bigGrid[indexBR];
 
     //dot products for four corners:
-    let dP1 = dotProduct(new Vector(relativeX, -1 + relativeY), vTL);
-    let dP2 = dotProduct(new Vector(-1 + relativeX, -1 + relativeY), vTR);
+    let dP1 = dotProduct(new Vector(relativeX, relativeY), vTL);
+    let dP2 = dotProduct(new Vector(relativeX, relativeY), vTR);
     let dP3 = dotProduct(new Vector(relativeX, relativeY), vBL);
-    let dP4 = dotProduct(new Vector(-1 + relativeX, relativeY), vBR);
+    let dP4 = dotProduct(new Vector(relativeX, relativeY), vBR);
 
     //bilinear interpolation of point from four corners
     let bI = bilinearInterpolationBetweenDotProducts(new Vector(relativeX, relativeY), vTL, vTR, vBL, vBR, dP1, dP2, dP3, dP4);
@@ -147,12 +147,12 @@ function generatePerlinArray(w, h, detail) {
     let gradient = Math.floor(bI * 256);
 
     //fade value
-    gradient = 6 * Math.pow(gradient, 5) - 15 * Math.pow(gradient, 4) + 10 * Math.pow(gradient, 3);
+    //gradient = 6 * Math.pow(gradient, 5) - 15 * Math.pow(gradient, 4) + 10 * Math.pow(gradient, 3);
+    gradient = 6 * gradient - 15 * gradient + 10 * Math.pow(gradient, 3);
     //add value to small grid array
     smoothSurface[i] = gradient;
   }
   
-  debugger
   return smoothSurface;
 }
 
