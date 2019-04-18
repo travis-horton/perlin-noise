@@ -17,7 +17,7 @@ function fade(value) {
   return ((6 * Math.pow(value, 5)) - (15 * Math.pow(value, 4)) + (10 * Math.pow(value, 3)));
 }
 
-function createBigGrid(detail) {
+function createOverlay(detail) {
   let randomVecs = {
     0: new Vector(1, 0), 
     1: new Vector(-1, 0), 
@@ -29,19 +29,19 @@ function createBigGrid(detail) {
     7: new Vector(-Math.sqrt(.5), -Math.sqrt(.5))
   };
 
-  let bigGrid = new Array(Math.pow(detail + 1, 2));
-  for (let i = 0; i < bigGrid.length; i++) {
-    bigGrid[i] = randomVecs[Math.floor(8 * Math.random())];
+  let overlay = new Array(Math.pow(detail + 1, 2));
+  for (let i = 0; i < overlay.length; i++) {
+    overlay[i] = randomVecs[Math.floor(8 * Math.random())];
   }
 
-  return bigGrid;
+  return overlay;
 }
 
 function generatePerlinArray(w, h, detail) {
   let perlinArray = new Uint8Array(w * h);
 
   // create a big overlay grid with random vectors
-  let bigGrid = createBigGrid(detail);
+  let overlay = createOverlay(detail);
 
   //dot products, bilinear interpolation, and fade for each point
   for (let i = 0; i < w * h; i++) {
@@ -54,7 +54,7 @@ function generatePerlinArray(w, h, detail) {
     let relativeVector = new Vector(relativeX, relativeY);
 
     //get dot products
-    let dPs = getDotProducts(v, w, relativeVector, bigGrid, detail);
+    let dPs = getDotProducts(v, w, relativeVector, overlay, detail);
 
     //bilinear interpolation of point from four corners
     let bI = bilinearInterpolation(relativeVector, ...dPs);
@@ -69,21 +69,21 @@ function generatePerlinArray(w, h, detail) {
   return perlinArray;
 }
 
-function getDotProducts(v, w, relativeVector, bigGrid, detail) {
+function getDotProducts(v, w, relativeVector, overlay, detail) {
   //get big grid top left coord
-  let bigGridX = Math.floor((v.x % w) / detail);
-  let bigGridY = Math.floor(Math.floor(v.y / w) / detail);
+  let overlayX = Math.floor((v.x % w) / detail);
+  let overlayY = Math.floor(Math.floor(v.y / w) / detail);
 
   //define four corners:
-  let indexTL = bigGridX + (bigGridY * (detail + 1));
-  let indexTR = bigGridX + 1 + (bigGridY * (detail + 1));
-  let indexBL = bigGridX + ((bigGridY + 1) * (detail + 1));
-  let indexBR = bigGridX + 1 + ((bigGridY + 1) * (detail + 1));
+  let indexTL = overlayX + (overlayY * (detail + 1));
+  let indexTR = overlayX + 1 + (overlayY * (detail + 1));
+  let indexBL = overlayX + ((overlayY + 1) * (detail + 1));
+  let indexBR = overlayX + 1 + ((overlayY + 1) * (detail + 1));
 
-  let vTL = bigGrid[indexTL];
-  let vTR = bigGrid[indexTR];
-  let vBL = bigGrid[indexBL];
-  let vBR = bigGrid[indexBR];
+  let vTL = overlay[indexTL];
+  let vTR = overlay[indexTR];
+  let vBL = overlay[indexBL];
+  let vBR = overlay[indexBR];
 
   //dot products for four corners:
   let dP1 = dotProduct(new Vector(relativeVector.x, relativeVector.y), vTL);
