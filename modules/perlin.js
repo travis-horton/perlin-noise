@@ -52,7 +52,7 @@ function generatePerlinArray(w, h, detail) {
     let relativeX = (v.x % Math.floor(w/detail))/(w/detail);
     let relativeY = (v.y % Math.floor(w/detail))/(w/detail);
     let relativeVector = new Vector(relativeX, relativeY);
-
+    
     //get dot products
     let dPs = getDotProducts(v, w, relativeVector, overlay, detail);
 
@@ -70,9 +70,9 @@ function generatePerlinArray(w, h, detail) {
 }
 
 function getDotProducts(v, w, relativeVector, overlay, detail) {
-  //get big grid top left coord
-  let overlayX = Math.floor((v.x % w) / detail);
-  let overlayY = Math.floor(Math.floor(v.y / w) / detail);
+  //get big grid top left coord  -- this is where the problem is: the detail has an extra column/row and the overlayX/Y is getting fucked up
+  let overlayX = Math.floor(v.x / detail + 1);
+  let overlayY = Math.floor(v.y / detail + 1);
 
   //define four corners:
   let indexTL = overlayX + (overlayY * (detail + 1));
@@ -85,6 +85,7 @@ function getDotProducts(v, w, relativeVector, overlay, detail) {
   let vBL = overlay[indexBL];
   let vBR = overlay[indexBR];
 
+  if (!vBR) console.log(v, w, relativeVector, overlay, detail, indexTL, indexTR, indexBL, indexBR, overlayX, overlayY);
   //dot products for four corners:
   let dP1 = dotProduct(new Vector(relativeVector.x, relativeVector.y), vTL);
   let dP2 = dotProduct(new Vector((1 - relativeVector.x), relativeVector.y), vTR);
