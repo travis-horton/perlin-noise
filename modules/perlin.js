@@ -13,11 +13,53 @@ perlin noise: random noise where each point is related to the points around it
   4. perlin noise actually uses a fade function--after final color is determined it is faded by the function: 6t^5 - 15t^4 + 10t^3
 */
 
-function fade(value) {
-  return ((6 * Math.pow(value, 5)) - (15 * Math.pow(value, 4)) + (10 * Math.pow(value, 3)));
+function perlinNoise(w, h, overlayWidth, overlayHeight) {
+  //create overlay grid one row and one column bigger than oW and oH respectively
+  //fill it with random one of 8 directions
+  let unitGrid = createUnitGrid(overlayWidth, overlayHeight);
+
+  //determine how many pixels per unitGrid
+  let widthDivisions = w / overlayWidth;
+  let heightDivisions = h / overlayHeight;
+  console.log(widthDivisions, heightDivisions);
+  //instantiate the perlin grid
+  let perlin = new Uint8Array(w * h);
+
+  for (let i = 0; i < unitGrid.length - (overlayWidth + 1); i++) {
+    console.log(i % (overlayWidth + 1));
+    if (i % (overlayWidth + 1) === overlayWidth) continue;
+    for (let j = 0; j < heightDivisions; j++) {
+      for (let k = 0; k < widthDivisions; k++) {
+        //find four dot products for this pixel
+        let dotProducts = [];
+
+        dotProducts[0] = dotProduct(unitGrid[i], new Vector(j/heightDivisions, k/widthDivisions));
+        dotProducts[1] = dotProduct(unitGrid[i + 1], new Vector(j/heightDivisions, -1 + k/widthDivisions));
+        dotProducts[2] = dotProduct(unitGrid[i + overlayWidth + 1], new Vector(-1 + j/heightDivisions, k/widthDivisions));
+        dotProducts[3] = dotProduct(unitGrid[i + overlayWidth + 1 + 1], new Vector(-1 + j/heightDivisions, -1 + k/widthDivisions));
+
+        //bilinear interpolate
+        let thisVector = new Vector(fade(j/heightDivisions), (k/widthDivisions));
+        let gradient = Math.floor(255 * (.5 * (1 + bilinearInterpolation(thisVector, dotProducts))));
+
+        //figure index of this pixel
+        let x = k + (i % (overlayWidth + 1) * widthDivisions);
+        let y = j + (Math.floor(i / (overlayHeight + 1)) * heightDivisions);
+        let index = x + (y * h);
+        perlin[index] = gradient;
+      }
+    }
+  }
+
+  return perlin;
 }
 
-function createOverlay(detail) {
+function fade(n) {
+  return n*n*n*(n*(n*6-15)+10);
+}
+
+function createUnitGrid(w, h) {
+  let grid = new Array((w + 1) * (h +1));
   let randomVecs = {
     0: new Vector(1, 0), 
     1: new Vector(-1, 0), 
@@ -29,69 +71,11 @@ function createOverlay(detail) {
     7: new Vector(-Math.sqrt(.5), -Math.sqrt(.5))
   };
 
-  let overlay = new Array(Math.pow(detail + 1, 2));
-  for (let i = 0; i < overlay.length; i++) {
-    overlay[i] = randomVecs[Math.floor(8 * Math.random())];
+  for (let i = 0; i < grid.length; i++) {
+    grid[i] = randomVecs[Math.floor(8 * Math.random())];
   }
 
-  return overlay;
+  return grid;
 }
 
-function generatePerlinArray(w, h, detail) {
-  let perlinArray = new Uint8Array(w * h);
-
-  // create a big overlay grid with random vectors
-  let overlay = createOverlay(detail);
-
-  //dot products, bilinear interpolation, and fade for each point
-  for (let i = 0; i < w * h; i++) {
-
-    let v = vectorFromIndex(i, w);
-
-    //get x & y relative to big grid--this should always be between 0 & 1
-    let relativeX = (v.x % Math.floor(w/detail))/(w/detail);
-    let relativeY = (v.y % Math.floor(w/detail))/(w/detail);
-    let relativeVector = new Vector(relativeX, relativeY);
-    
-    //get dot products
-    let dPs = getDotProducts(v, w, relativeVector, overlay, detail);
-
-    //bilinear interpolation of point from four corners
-    let bI = bilinearInterpolation(relativeVector, ...dPs);
-    bI = (bI + 1)/2;
-    //fade value
-    let gradient = fade(bI) * 255;
-    //gradient = 6 * Math.pow(gradient, 5) - 15 * Math.pow(gradient, 4) + 10 * Math.pow(gradient, 3);
-    //gradient = 6 * gradient - 15 * gradient + 10 * Math.pow(gradient, 3);
-    //add value to small grid array
-    perlinArray[i] = bI * 255;
-  }
-  return perlinArray;
-}
-
-function getDotProducts(v, w, relativeVector, overlay, detail) {
-  //get big grid top left coord  -- this is where the problem is: the detail has an extra column/row and the overlayX/Y is getting fucked up
-  let overlayX = Math.floor(v.x / detail + 1);
-  let overlayY = Math.floor(v.y / detail + 1);
-
-  //define four corners:
-  let indexTL = overlayX + (overlayY * (detail + 1));
-  let indexTR = overlayX + 1 + (overlayY * (detail + 1));
-  let indexBL = overlayX + ((overlayY + 1) * (detail + 1));
-  let indexBR = overlayX + 1 + ((overlayY + 1) * (detail + 1));
-
-  let vTL = overlay[indexTL];
-  let vTR = overlay[indexTR];
-  let vBL = overlay[indexBL];
-  let vBR = overlay[indexBR];
-
-  if (!vBR) console.log(v, w, relativeVector, overlay, detail, indexTL, indexTR, indexBL, indexBR, overlayX, overlayY);
-  //dot products for four corners:
-  let dP1 = dotProduct(new Vector(relativeVector.x, relativeVector.y), vTL);
-  let dP2 = dotProduct(new Vector((1 - relativeVector.x), relativeVector.y), vTR);
-  let dP3 = dotProduct(new Vector(relativeVector.x, (1 - relativeVector.y)), vBL);
-  let dP4 = dotProduct(new Vector((1 - relativeVector.x), (1 - relativeVector.y)), vBR);
-  return [dP1, dP2, dP3, dP4];
-}
-
-export default generatePerlinArray;
+export default perlinNoise;

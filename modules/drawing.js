@@ -27,4 +27,8 @@ export class Color {
   rgbIsValid(r, g, b) {
     return (Number.isInteger(r) && Number.isInteger(g) && Number.isInteger(b));
   }
+
+  returnRGB() {
+    return (`rgb(${this.r},${this.g},${this.b})`);
+  }
 }

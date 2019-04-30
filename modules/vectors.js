@@ -39,9 +39,9 @@ export function linearInterpolation(known, v1, v2) {
   return (numerator1 + numerator2)/denominator;
 }
 
-export function bilinearInterpolation(goalV, fTL, fTR, fBL, fBR) {
-  let AB = linearInterpolation(goalV.x, new Vector(0, fTL), new Vector(1, fTR));
-  let CD = linearInterpolation(goalV.x, new Vector(0, fBL), new Vector(1, fBR));
+export function bilinearInterpolation(goalV, dotProducts) {
+  let AB = linearInterpolation(goalV.x, new Vector(0, dotProducts[0]), new Vector(1, dotProducts[1]));
+  let CD = linearInterpolation(goalV.x, new Vector(0, dotProducts[2]), new Vector(1, dotProducts[3]));
 
   let ABCD = linearInterpolation(goalV.y, new Vector(0, AB), new Vector(1, CD));
 
