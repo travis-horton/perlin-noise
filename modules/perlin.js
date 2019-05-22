@@ -13,6 +13,31 @@ perlin noise: random noise where each point is related to the points around it
   4. perlin noise actually uses a fade function--after final color is determined it is faded by the function: 6t^5 - 15t^4 + 10t^3
 */
 
+function perlinNoiseForPoint(v, unitGrid, gridWidth) {
+  //calculate grid cell
+  let X = Math.floor(v.x);
+  let Y = Math.floor(v.y);
+
+  //calculate relative x, y
+  let x = v.x - X;
+  let y = v.y - Y;
+
+  let timesY = gridWidth + 1;
+  //calculate noise from for corners
+  let n00 = dotProduct(unitGrid[X + (Y * (timesY))], new Vector(x, y));
+  let n01 = dotProduct(unitGrid[X + 1 + (Y * (timesY))], new Vector(x - 1, y));
+  let n10 = dotProduct(unitGrid[X + ((Y + 1) * (timesY))], new Vector(x, y - 1));
+  let n11 = dotProduct(unitGrid[X + 1 + ((Y + 1) * (timesY))], new Vector(x - 1, y -1));
+
+  //compute fade for x and y
+  x = fade(x);
+  y = fade(y);
+
+  //interpolate results
+  return bilinearInterpolation(new Vector(x, y), [n00, n01, n10, n11]); 
+}
+
+
 function perlinNoise(w, h, overlayWidth, overlayHeight) {
   //create overlay grid one row and one column bigger than oW and oH respectively
   //fill it with random one of 8 directions
@@ -21,36 +46,26 @@ function perlinNoise(w, h, overlayWidth, overlayHeight) {
   //determine how many pixels per unitGrid
   let widthDivisions = w / overlayWidth;
   let heightDivisions = h / overlayHeight;
-  console.log(widthDivisions, heightDivisions);
   //instantiate the perlin grid
   let perlin = new Uint8Array(w * h);
+ 
+  let largeUnitGrid = createUnitGrid(overlayWidth/2, overlayHeight/2);
+  for (let i = 0; i < perlin.length; i++) {
+    let v = vectorFromIndex(i, w);
 
-  for (let i = 0; i < unitGrid.length - (overlayWidth + 1); i++) {
-    console.log(i % (overlayWidth + 1));
-    if (i % (overlayWidth + 1) === overlayWidth) continue;
-    for (let j = 0; j < heightDivisions; j++) {
-      for (let k = 0; k < widthDivisions; k++) {
-        //find four dot products for this pixel
-        let dotProducts = [];
-
-        dotProducts[0] = dotProduct(unitGrid[i], new Vector(j/heightDivisions, k/widthDivisions));
-        dotProducts[1] = dotProduct(unitGrid[i + 1], new Vector(j/heightDivisions, -1 + k/widthDivisions));
-        dotProducts[2] = dotProduct(unitGrid[i + overlayWidth + 1], new Vector(-1 + j/heightDivisions, k/widthDivisions));
-        dotProducts[3] = dotProduct(unitGrid[i + overlayWidth + 1 + 1], new Vector(-1 + j/heightDivisions, -1 + k/widthDivisions));
-
-        //bilinear interpolate
-        let thisVector = new Vector(fade(j/heightDivisions), (k/widthDivisions));
-        let gradient = Math.floor(255 * (.5 * (1 + bilinearInterpolation(thisVector, dotProducts))));
-
-        //figure index of this pixel
-        let x = k + (i % (overlayWidth + 1) * widthDivisions);
-        let y = j + (Math.floor(i / (overlayHeight + 1)) * heightDivisions);
-        let index = x + (y * h);
-        perlin[index] = gradient;
-      }
-    }
+    let noiseValue = perlinNoiseForPoint(new Vector(v.x/widthDivisions/2, v.y/heightDivisions/2), largeUnitGrid, overlayWidth/2);
+    noiseValue = noiseValue * .5 + .5;
+    perlin[i] = Math.floor((perlin[i] + (noiseValue * 255))/2)
   }
 
+ 
+  for (let i = 0; i < perlin.length; i++) {
+    let v = vectorFromIndex(i, w);
+    
+    let noiseValue = perlinNoiseForPoint(new Vector(v.x/widthDivisions, v.y/heightDivisions), unitGrid, overlayWidth);
+    noiseValue = noiseValue * .5 + .5;
+    perlin[i] = Math.floor(255 * noiseValue);
+  }
   return perlin;
 }
 
