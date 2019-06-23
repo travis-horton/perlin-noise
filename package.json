@@ -2,11 +2,10 @@
   "name": "topocircle",
   "version": "0.0.1",
   "description": "a little animation of a dot traveling around a topo map",
-  "main": "index.html",
+  "private": true,
   "scripts": {
-    "test": "test",
-    "serve": "./node_modules/.bin/parcel index.html",
-    "build": "./node_modules/.bin/parcel build index.html"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack"
   },
   "author": "kiddspazz (https://www.travish.com)",
   "license": "ISC",
