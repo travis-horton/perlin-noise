@@ -1,2 +1,4 @@
 x = R * (cos angle) + cx
 y = R * (sin angle) + cy
+
+parcel isn't directing the entry js file to "./" first, but rather to "/"
