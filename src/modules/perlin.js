@@ -37,7 +37,6 @@ function perlinNoiseForPoint(v, unitGrid, gridWidth) {
   return bilinearInterpolation(new Vector(x, y), [n00, n01, n10, n11]); 
 }
 
-
 function perlinNoise(w, h, overlayWidth, overlayHeight) {
   //create overlay grid one row and one column bigger than oW and oH respectively
   //fill it with random one of 8 directions
@@ -46,9 +45,10 @@ function perlinNoise(w, h, overlayWidth, overlayHeight) {
   //determine how many pixels per unitGrid
   let widthDivisions = w / overlayWidth;
   let heightDivisions = h / overlayHeight;
+
   //instantiate the perlin grid
   let perlin = new Uint8Array(w * h);
- 
+
   let largeUnitGrid = createUnitGrid(overlayWidth/2, overlayHeight/2);
   for (let i = 0; i < perlin.length; i++) {
     let v = vectorFromIndex(i, w);
@@ -58,10 +58,9 @@ function perlinNoise(w, h, overlayWidth, overlayHeight) {
     perlin[i] = Math.floor((perlin[i] + (noiseValue * 255))/2)
   }
 
- 
   for (let i = 0; i < perlin.length; i++) {
     let v = vectorFromIndex(i, w);
-    
+
     let noiseValue = perlinNoiseForPoint(new Vector(v.x/widthDivisions, v.y/heightDivisions), unitGrid, overlayWidth);
     noiseValue = noiseValue * .5 + .5;
     perlin[i] = Math.floor(255 * noiseValue);
@@ -76,8 +75,8 @@ function fade(n) {
 function createUnitGrid(w, h) {
   let grid = new Array((w + 1) * (h +1));
   let randomVecs = {
-    0: new Vector(1, 0), 
-    1: new Vector(-1, 0), 
+    0: new Vector(1, 0),
+    1: new Vector(-1, 0),
     2: new Vector(0, 1),
     3: new Vector(0, -1),
     4: new Vector(Math.sqrt(.5), Math.sqrt(.5)),

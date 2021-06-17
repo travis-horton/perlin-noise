@@ -2,13 +2,17 @@ import perlinNoise from "./modules/perlin.js";
 import { outlineCircle, solidCircle, Color } from "./modules/drawing.js";
 
 function startApp() {
-  const canvas = document.getElementById('canvas1');
-  const W = canvas.width = 512;
-  const H = canvas.height = W;
-  const ctx = canvas.getContext("2d");
+  const canvas1 = document.getElementById('canvas1');
+  const W = canvas1.width = 512;
+  const H = canvas1.height = W;
+  const ctx = canvas1.getContext("2d");
   const RADIUS = W/3;
   const STEPS = 360;
   let step = 0;
+
+  const canvas2 = document.getElementById('canvas2');
+  canvas2.width = 255;
+  canvas2.height = 12;
 
   let imageData = ctx.getImageData(0, 0, W, H);
   let data = imageData.data;
@@ -27,7 +31,9 @@ function startApp() {
     let y = Math.floor(findCircleY());
     solidCircle(x, y, 5, new Color(255, 255, 255).returnRGB(), ctx);
     let gN = elev[y * W + x];
-    let color = new Color(gN, gN, gN);
+    const ctx2 = canvas2.getContext("2d");
+    ctx2.clearRect(0, 0, 255, 12);
+    solidCircle(gN, 6, 5, new Color(40,40,40).returnRGB(), ctx2);
   }
 
   function printBackground() {
