@@ -1,13 +1,8 @@
 import perlinNoise from "./modules/perlin.js";
 import { outlineCircle, solidCircle, Color } from "./modules/drawing.js";
 
-document.addEventListener("DOMContentLoaded", startApp); 
-  
 function startApp() {
-  const div = document.getElementById("box");
-  const canvas = document.createElement("canvas");
-  div.appendChild(canvas);
-  canvas.id = "canvas1";
+  const canvas = document.getElementById('canvas1');
   const W = canvas.width = 512;
   const H = canvas.height = W;
   const ctx = canvas.getContext("2d");
@@ -18,7 +13,6 @@ function startApp() {
   let imageData = ctx.getImageData(0, 0, W, H);
   let data = imageData.data;
   let elev = perlinNoise(W, H, 16, 16);  //Uint8Array(W * H);
-  console.log(elev);
 
   window.setInterval(tick, 20);
   function findCircleX() {return RADIUS * Math.cos(Math.PI * step/STEPS) + W/2;}
@@ -34,7 +28,6 @@ function startApp() {
     solidCircle(x, y, 5, new Color(255, 255, 255).returnRGB(), ctx);
     let gN = elev[y * W + x];
     let color = new Color(gN, gN, gN);
-    document.querySelector("body").style.backgroundColor = color.returnRGB();
   }
 
   function printBackground() {
@@ -52,3 +45,5 @@ function startApp() {
     ctx.putImageData(imageData, 0, 0);
   }
 }
+
+export default startApp;
