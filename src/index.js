@@ -30,7 +30,7 @@ export const renderPerlinNoiseInElement = (parentContainerId) => {
   const heightGaugeCanvas = makeHeightGaugeCanvas({ width: 255, height: 12 });
 
   const span = document.createElement('span');
-  const label = document.createTextNode('height gauge: ');
+  const label = document.createTextNode('height: ');
   span.append(label);
 
   const heightGaugeDiv = document.createElement('div');
