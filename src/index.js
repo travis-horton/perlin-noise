@@ -1,5 +1,5 @@
-import perlinNoise from "./modules/perlin.js";
-import { outlineCircle, solidCircle, Color } from "./modules/drawing.js";
+import perlinNoise from './modules/perlin.js';
+import { outlineCircle, solidCircle, Color } from './modules/drawing.js';
 
 const makePerlinNoiseCanvas = ({ width, height }) => {
   const canvas = document.createElement('canvas');
@@ -14,7 +14,7 @@ const makeHeightGaugeCanvas = ({ width, height }) => {
   const canvas = document.createElement('canvas');
   canvas.width = width;
   canvas.height = height;
-  canvas.style = "border: 1pt solid black";
+  canvas.style = 'border: 1pt solid black';
 
   return canvas;
 };
@@ -23,7 +23,7 @@ export const renderPerlinNoiseInElement = (parentContainerId) => {
   const parentContainer = document.getElementById(parentContainerId);
   const W = 512;
   const H = 512;
-  const RADIUS = W/3;
+  const RADIUS = W / 3;
   const STEPS = 360;
   let step = 0;
 
@@ -41,45 +41,45 @@ export const renderPerlinNoiseInElement = (parentContainerId) => {
 
   const perlinNoiseCanvas = makePerlinNoiseCanvas({ width: W, height: H });
   parentContainer.append(perlinNoiseCanvas);
-  const ctx = perlinNoiseCanvas.getContext("2d");
+  const ctx = perlinNoiseCanvas.getContext('2d');
 
-  let imageData = ctx.getImageData(0, 0, W, H);
-  let data = imageData.data;
-  let elev = perlinNoise(W, H, 16, 16);  //Uint8Array(W * H);
+  const imageData = ctx.getImageData(0, 0, W, H);
+  const { data } = imageData;
+  const elev = perlinNoise(W, H, 16, 16); // Uint8Array(W * H);
 
   window.setInterval(tick, 20);
-  function findCircleX() {return RADIUS * Math.cos(Math.PI * step/STEPS) + W/2;}
-  function findCircleY() {return RADIUS * Math.sin(Math.PI * step/STEPS) + H/2;}
+  function findCircleX() { return RADIUS * Math.cos(Math.PI * step / STEPS) + W / 2; }
+  function findCircleY() { return RADIUS * Math.sin(Math.PI * step / STEPS) + H / 2; }
 
   function tick() {
     step++;
-    if (step >= STEPS*2) step = 0;
+    if (step >= STEPS * 2) step = 0;
     ctx.clearRect(0, 0, W, H);
     printBackground();
-    let x = Math.floor(findCircleX());
-    let y = Math.floor(findCircleY());
+    const x = Math.floor(findCircleX());
+    const y = Math.floor(findCircleY());
     solidCircle(x, y, 5, new Color(255, 255, 255).returnRGB(), ctx);
-    let gN = elev[y * W + x];
-    const ctx2 = heightGaugeCanvas.getContext("2d");
+    const gN = elev[y * W + x];
+    const ctx2 = heightGaugeCanvas.getContext('2d');
     ctx2.clearRect(0, 0, 512, 12);
-    solidCircle(gN, 6, 5, new Color(40,40,40).returnRGB(), ctx2);
+    solidCircle(gN, 6, 5, new Color(40, 40, 40).returnRGB(), ctx2);
   }
 
   function printBackground() {
     for (let i = 0; i < data.length; i += 4) {
-      let showRedGrid = false;
+      const showRedGrid = false;
       if (showRedGrid) {
-        if ((i/4) % 32 === 0 || Math.floor((i/4)/512) % 32 === 0) {
+        if ((i / 4) % 32 === 0 || Math.floor((i / 4) / 512) % 32 === 0) {
           data[i] = 255;
           data[i + 1] = 0;
           data[i + 2] = 0;
         }
       } else {
-        data[i] = data[i + 1] = data[i + 2] = elev[i/4];
+        data[i] = data[i + 1] = data[i + 2] = elev[i / 4];
       }
       data[i + 3] = 255;
-    };
+    }
 
     ctx.putImageData(imageData, 0, 0);
   }
-}
+};

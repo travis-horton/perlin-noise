@@ -16,12 +16,12 @@ export function solidCircle(x, y, r, color, ctx) {
 export class Color {
   constructor(r, g, b, a) {
     if (!this.rgbIsValid(r, g, b)) {
-     throw new Error("rgb is not an integer");
+      throw new Error('rgb is not an integer');
     }
-    this.r = r
-    this.g = g
-    this.b = b
-    this.a = Number.isInteger(a) ? a : 255
+    this.r = r;
+    this.g = g;
+    this.b = b;
+    this.a = Number.isInteger(a) ? a : 255;
   }
 
   rgbIsValid(r, g, b) {

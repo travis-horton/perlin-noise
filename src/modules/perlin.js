@@ -1,4 +1,6 @@
-import { Vector, dotProduct, indexFromVector, vectorFromIndex, bilinearInterpolation } from "./vectors.js"
+import {
+  Vector, dotProduct, indexFromVector, vectorFromIndex, bilinearInterpolation,
+} from './vectors.js';
 
 /*
 perlin noise: random noise where each point is related to the points around it
@@ -14,75 +16,75 @@ perlin noise: random noise where each point is related to the points around it
 */
 
 function perlinNoiseForPoint(v, unitGrid, gridWidth) {
-  //calculate grid cell
-  let X = Math.floor(v.x);
-  let Y = Math.floor(v.y);
+  // calculate grid cell
+  const X = Math.floor(v.x);
+  const Y = Math.floor(v.y);
 
-  //calculate relative x, y
+  // calculate relative x, y
   let x = v.x - X;
   let y = v.y - Y;
 
-  let timesY = gridWidth + 1;
-  //calculate noise from for corners
-  let n00 = dotProduct(unitGrid[X + (Y * (timesY))], new Vector(x, y));
-  let n01 = dotProduct(unitGrid[X + 1 + (Y * (timesY))], new Vector(x - 1, y));
-  let n10 = dotProduct(unitGrid[X + ((Y + 1) * (timesY))], new Vector(x, y - 1));
-  let n11 = dotProduct(unitGrid[X + 1 + ((Y + 1) * (timesY))], new Vector(x - 1, y -1));
+  const timesY = gridWidth + 1;
+  // calculate noise from for corners
+  const n00 = dotProduct(unitGrid[X + (Y * (timesY))], new Vector(x, y));
+  const n01 = dotProduct(unitGrid[X + 1 + (Y * (timesY))], new Vector(x - 1, y));
+  const n10 = dotProduct(unitGrid[X + ((Y + 1) * (timesY))], new Vector(x, y - 1));
+  const n11 = dotProduct(unitGrid[X + 1 + ((Y + 1) * (timesY))], new Vector(x - 1, y - 1));
 
-  //compute fade for x and y
+  // compute fade for x and y
   x = fade(x);
   y = fade(y);
 
-  //interpolate results
-  return bilinearInterpolation(new Vector(x, y), [n00, n01, n10, n11]); 
+  // interpolate results
+  return bilinearInterpolation(new Vector(x, y), [n00, n01, n10, n11]);
 }
 
 function perlinNoise(w, h, overlayWidth, overlayHeight) {
-  //create overlay grid one row and one column bigger than oW and oH respectively
-  //fill it with random one of 8 directions
-  let unitGrid = createUnitGrid(overlayWidth, overlayHeight);
+  // create overlay grid one row and one column bigger than oW and oH respectively
+  // fill it with random one of 8 directions
+  const unitGrid = createUnitGrid(overlayWidth, overlayHeight);
 
-  //determine how many pixels per unitGrid
-  let widthDivisions = w / overlayWidth;
-  let heightDivisions = h / overlayHeight;
+  // determine how many pixels per unitGrid
+  const widthDivisions = w / overlayWidth;
+  const heightDivisions = h / overlayHeight;
 
-  //instantiate the perlin grid
-  let perlin = new Uint8Array(w * h);
+  // instantiate the perlin grid
+  const perlin = new Uint8Array(w * h);
 
-  let largeUnitGrid = createUnitGrid(overlayWidth/2, overlayHeight/2);
+  const largeUnitGrid = createUnitGrid(overlayWidth / 2, overlayHeight / 2);
   for (let i = 0; i < perlin.length; i++) {
-    let v = vectorFromIndex(i, w);
+    const v = vectorFromIndex(i, w);
 
-    let noiseValue = perlinNoiseForPoint(new Vector(v.x/widthDivisions/2, v.y/heightDivisions/2), largeUnitGrid, overlayWidth/2);
-    noiseValue = noiseValue * .5 + .5;
-    perlin[i] = Math.floor((perlin[i] + (noiseValue * 255))/2)
+    let noiseValue = perlinNoiseForPoint(new Vector(v.x / widthDivisions / 2, v.y / heightDivisions / 2), largeUnitGrid, overlayWidth / 2);
+    noiseValue = noiseValue * 0.5 + 0.5;
+    perlin[i] = Math.floor((perlin[i] + (noiseValue * 255)) / 2);
   }
 
   for (let i = 0; i < perlin.length; i++) {
-    let v = vectorFromIndex(i, w);
+    const v = vectorFromIndex(i, w);
 
-    let noiseValue = perlinNoiseForPoint(new Vector(v.x/widthDivisions, v.y/heightDivisions), unitGrid, overlayWidth);
-    noiseValue = noiseValue * .5 + .5;
+    let noiseValue = perlinNoiseForPoint(new Vector(v.x / widthDivisions, v.y / heightDivisions), unitGrid, overlayWidth);
+    noiseValue = noiseValue * 0.5 + 0.5;
     perlin[i] = Math.floor(255 * noiseValue);
   }
   return perlin;
 }
 
 function fade(n) {
-  return n*n*n*(n*(n*6-15)+10);
+  return n * n * n * (n * (n * 6 - 15) + 10);
 }
 
 function createUnitGrid(w, h) {
-  let grid = new Array((w + 1) * (h +1));
-  let randomVecs = {
+  const grid = new Array((w + 1) * (h + 1));
+  const randomVecs = {
     0: new Vector(1, 0),
     1: new Vector(-1, 0),
     2: new Vector(0, 1),
     3: new Vector(0, -1),
-    4: new Vector(Math.sqrt(.5), Math.sqrt(.5)),
-    5: new Vector(-Math.sqrt(.5), Math.sqrt(.5)),
-    6: new Vector(Math.sqrt(.5), -Math.sqrt(.5)),
-    7: new Vector(-Math.sqrt(.5), -Math.sqrt(.5))
+    4: new Vector(Math.sqrt(0.5), Math.sqrt(0.5)),
+    5: new Vector(-Math.sqrt(0.5), Math.sqrt(0.5)),
+    6: new Vector(Math.sqrt(0.5), -Math.sqrt(0.5)),
+    7: new Vector(-Math.sqrt(0.5), -Math.sqrt(0.5)),
   };
 
   for (let i = 0; i < grid.length; i++) {
