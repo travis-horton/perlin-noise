@@ -40,8 +40,16 @@ export function linearInterpolation(known, v1, v2) {
 }
 
 export function bilinearInterpolation(goalV, dotProducts) {
-  const AB = linearInterpolation(goalV.x, new Vector(0, dotProducts[0]), new Vector(1, dotProducts[1]));
-  const CD = linearInterpolation(goalV.x, new Vector(0, dotProducts[2]), new Vector(1, dotProducts[3]));
+  const AB = linearInterpolation(
+    goalV.x,
+    new Vector(0, dotProducts[0]),
+    new Vector(1, dotProducts[1]),
+  );
+  const CD = linearInterpolation(
+    goalV.x,
+    new Vector(0, dotProducts[2]),
+    new Vector(1, dotProducts[3]),
+  );
 
   const ABCD = linearInterpolation(goalV.y, new Vector(0, AB), new Vector(1, CD));
 

@@ -1,9 +1,8 @@
-import perlinNoise from './modules/perlin.js';
-import { outlineCircle, solidCircle, Color } from './modules/drawing.js';
+import perlinNoise from './modules/perlin';
+import { solidCircle, Color } from './modules/drawing';
 
 const makePerlinNoiseCanvas = ({ width, height }) => {
   const canvas = document.createElement('canvas');
-  const contentDiv = document.getElementById('box');
   canvas.width = width;
   canvas.height = height;
 
@@ -19,7 +18,7 @@ const makeHeightGaugeCanvas = ({ width, height }) => {
   return canvas;
 };
 
-export const renderPerlinNoiseInElement = (parentContainerId) => {
+const renderPerlinNoiseInElement = (parentContainerId) => {
   const parentContainer = document.getElementById(parentContainerId);
   const W = 512;
   const H = 512;
@@ -47,22 +46,11 @@ export const renderPerlinNoiseInElement = (parentContainerId) => {
   const { data } = imageData;
   const elev = perlinNoise(W, H, 16, 16); // Uint8Array(W * H);
 
-  window.setInterval(tick, 20);
-  function findCircleX() { return RADIUS * Math.cos(Math.PI * step / STEPS) + W / 2; }
-  function findCircleY() { return RADIUS * Math.sin(Math.PI * step / STEPS) + H / 2; }
-
-  function tick() {
-    step++;
-    if (step >= STEPS * 2) step = 0;
-    ctx.clearRect(0, 0, W, H);
-    printBackground();
-    const x = Math.floor(findCircleX());
-    const y = Math.floor(findCircleY());
-    solidCircle(x, y, 5, new Color(255, 255, 255).returnRGB(), ctx);
-    const gN = elev[y * W + x];
-    const ctx2 = heightGaugeCanvas.getContext('2d');
-    ctx2.clearRect(0, 0, 512, 12);
-    solidCircle(gN, 6, 5, new Color(40, 40, 40).returnRGB(), ctx2);
+  function findCircleX() {
+    return RADIUS * Math.cos((Math.PI * step) / STEPS) + W / 2;
+  }
+  function findCircleY() {
+    return RADIUS * Math.sin((Math.PI * step) / STEPS) + H / 2;
   }
 
   function printBackground() {
@@ -75,11 +63,30 @@ export const renderPerlinNoiseInElement = (parentContainerId) => {
           data[i + 2] = 0;
         }
       } else {
-        data[i] = data[i + 1] = data[i + 2] = elev[i / 4];
+        data[i] = elev[i / 4];
+        data[i + 1] = elev[i / 4];
+        data[i + 2] = elev[i / 4];
       }
       data[i + 3] = 255;
     }
 
     ctx.putImageData(imageData, 0, 0);
   }
+  function tick() {
+    step += 1;
+    if (step >= STEPS * 2) step = 0;
+    ctx.clearRect(0, 0, W, H);
+    printBackground();
+    const x = Math.floor(findCircleX());
+    const y = Math.floor(findCircleY());
+    solidCircle(x, y, 5, new Color(255, 255, 255).returnRGB(), ctx);
+    const gN = elev[y * W + x];
+    const ctx2 = heightGaugeCanvas.getContext('2d');
+    ctx2.clearRect(0, 0, 512, 12);
+    solidCircle(gN, 6, 5, new Color(40, 40, 40).returnRGB(), ctx2);
+  }
+
+  window.setInterval(tick, 20);
 };
+
+export default renderPerlinNoiseInElement;

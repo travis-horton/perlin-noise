@@ -13,19 +13,19 @@ export function solidCircle(x, y, r, color, ctx) {
   ctx.fill();
 }
 
+function rgbIsValid(r, g, b) {
+  return (Number.isInteger(r) && Number.isInteger(g) && Number.isInteger(b));
+}
+
 export class Color {
   constructor(r, g, b, a) {
-    if (!this.rgbIsValid(r, g, b)) {
+    if (!rgbIsValid(r, g, b)) {
       throw new Error('rgb is not an integer');
     }
     this.r = r;
     this.g = g;
     this.b = b;
     this.a = Number.isInteger(a) ? a : 255;
-  }
-
-  rgbIsValid(r, g, b) {
-    return (Number.isInteger(r) && Number.isInteger(g) && Number.isInteger(b));
   }
 
   returnRGB() {
