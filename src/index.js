@@ -86,7 +86,15 @@ const renderPerlinNoiseInElement = (parentContainerId) => {
     solidCircle(gN, 6, 5, new Color(40, 40, 40).returnRGB(), ctx2);
   }
 
-  window.setInterval(tick, 20);
+  const intervalId = window.setInterval(tick, 20);
+
+  // Stops the animation and takes the demo off the page. Call it when the
+  // page showing the demo closes; otherwise the timer keeps drawing forever.
+  return function stop() {
+    window.clearInterval(intervalId);
+    heightGaugeDiv.remove();
+    perlinNoiseCanvas.remove();
+  };
 };
 
 export default renderPerlinNoiseInElement;
