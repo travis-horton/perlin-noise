@@ -10,6 +10,14 @@ This is the whole history of the perlin-noise demo, newest first, written for so
 
 *Written from the git history on 26.0925 and checked against the code of each day. From then on, each pull request carries its own entry, and it is added here automatically when the pull request merges.*
 
+## October 2026
+
+**perlin-noise #9: the demo stops when you leave its page** · [PR #9](https://github.com/travis-horton/perlin-noise/pull/9) · merged 26.1002.1017 · v3.2.3
+- **[Stops when asked](https://github.com/travis-horton/perlin-noise/commit/580e5cc)** · merged 26.1002.1017
+  Fixed: after you left the demo's page on travish.com, the map kept being redrawn 50 times a second out of sight, and each visit added another copy. The demo now hands the website a way to stop it, which ends the redrawing and removes the map and gauge. (The website starts using it in its own change.)
+- **[A plain-language history](https://github.com/travis-horton/perlin-noise/commit/113c454)** · merged 26.1002.1017
+  Behind the scenes: a new page, HISTORY.md, tells the project's whole story in plain words from 19.0411 on, with a version number for each step (it is at 3.2.2), and each future change adds its own entry automatically.
+
 ## June 2024
 
 **Code tidy** · [commit](https://github.com/travis-horton/perlin-noise/commit/d93a9f9) · merged 24.0606.1257 · v3.2.2
