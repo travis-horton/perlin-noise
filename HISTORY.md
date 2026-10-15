@@ -12,6 +12,9 @@ This is the whole history of the perlin-noise demo, newest first, written for so
 
 ## October 2026
 
+**perlin-noise #10: the change log catches up on entries it missed** · [PR #10](https://github.com/travis-horton/perlin-noise/pull/10) · merged 26.1015.0727 · v3.2.4
+- Behind the scenes: the robot that writes this file after each change now also writes in any earlier finished change it missed, oldest first, with a "recorded late" note when it is more than an hour late. If GitHub won't answer one of its lookups, it skips only that one, records the newest change anyway, and fills the gap on a later run.
+
 **perlin-noise #9: the demo stops when you leave its page** · [PR #9](https://github.com/travis-horton/perlin-noise/pull/9) · merged 26.1002.1017 · v3.2.3
 - **[Stops when asked](https://github.com/travis-horton/perlin-noise/commit/580e5cc)** · merged 26.1002.1017
   Fixed: after you left the demo's page on travish.com, the map kept being redrawn 50 times a second out of sight, and each visit added another copy. The demo now hands the website a way to stop it, which ends the redrawing and removes the map and gauge. (The website starts using it in its own change.)
