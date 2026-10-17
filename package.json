@@ -1,6 +1,6 @@
 {
   "name": "topocircle",
-  "version": "3.2.4",
+  "version": "3.2.5",
   "description": "a little animation of a dot traveling around a topo map",
   "private": true,
   "scripts": {

@@ -12,6 +12,9 @@ This is the whole history of the perlin-noise demo, newest first, written for so
 
 ## October 2026
 
+**perlin-noise #11: the change log keeper, refreshed (current checkout step)** · [PR #11](https://github.com/travis-horton/perlin-noise/pull/11) · merged 26.1017.1357 · v3.2.5
+- Behind the scenes: the automatic job that writes this change log now uses version 7 of GitHub's checkout step instead of version 4, and passes what it saves to GitHub as a list rather than one long line of text. The entries it writes, their version numbers and their tags are the same as before.
+
 **perlin-noise #10: the change log catches up on entries it missed** · [PR #10](https://github.com/travis-horton/perlin-noise/pull/10) · merged 26.1015.0727 · v3.2.4
 - Behind the scenes: the robot that writes this file after each change now also writes in any earlier finished change it missed, oldest first, with a "recorded late" note when it is more than an hour late. If GitHub won't answer one of its lookups, it skips only that one, records the newest change anyway, and fills the gap on a later run.
 
